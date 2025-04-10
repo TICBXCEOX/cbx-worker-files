@@ -5,8 +5,6 @@ import tempfile
 import uuid
 import boto3
 from pandas import DataFrame, ExcelWriter
-from services.email_service import EmailService
-from services.file_service import FileService
 from configs import ACCESS_KEY, SECRET_KEY, REGION_NAME, BUCKET_NAME, ROOT_UPLOAD_FOLDER, WAIT_TIME_SECONDS
 
 class AwsService:

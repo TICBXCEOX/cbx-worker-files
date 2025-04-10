@@ -50,7 +50,7 @@ WAIT_TIME_SECONDS=os.getenv('WAIT_TIME_SECONDS')
 SENDGRID_API_KEY=os.getenv('SENDGRID_API_KEY')
 
 # FLASK
-DEBUG=os.getenv('DEBUG') == 'True'
+DEBUG=ENVIRONMENT == 'development'
 
 EMAIL_FROM=os.getenv('EMAIL_FROM')
 #EMAIL_TI=os.getenv('EMAIL_TI')
