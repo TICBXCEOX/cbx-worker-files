@@ -1,28 +1,16 @@
 services:
-  # worker_dispatcher:
-  #   build:
-  #     context: ./src
-  #     dockerfile: Dockerfile
-  #   container_name: worker-dispatcher:latest
-  #   restart: always
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   networks:
-  #     - net
-
-  worker_processor:
-    profiles: ["manual"]
+  worker_dispatcher:
     build:
       context: ./src
       dockerfile: Dockerfile
-    container_name: worker-processor:latest
-    restart: "no" #sob demanda
+    container_name: worker-dispatcher
+    restart: always
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock    
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - net
-    command: python worker_processor/main.py
-
+    environment:
+      - ENVIRONMENT=production      
 networks:
   net:
     external: true

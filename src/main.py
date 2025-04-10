@@ -1,10 +1,9 @@
 import asyncio
 import json
+from configs import *
 from services.docker_service import DockerService
 from services.logger_service import LoggerService
 from services.aws_service import AwsService
-from configs import *
-from worker_processor.main import WorkerProcessor
 
 class WorkerDispatcher:
     def __init__(self):
@@ -25,41 +24,53 @@ class WorkerDispatcher:
             
             self.logger_service.info(f"Início mensagem {message_id}")
             
-            # processa o zip
-            sucesso = False
+            transaction_id = body['transaction_id']
+            file_name = body['file_name']
+            tipo = str(body['tipo'])
+            email = body['email']
+            s3_path = body['s3_path']            
+            client_id = str(body['client_id'])
+            message_group = body['message_group']
+            user_id = str(body['user_id'])
+            send_queue = body['send_queue']
+            request_origin = body['request_origin']                       
+                            
+            self.logger_service.info(f"transaction_id = {transaction_id} - {type(transaction_id)}")
+            self.logger_service.info(f"file_name = {file_name} - {type(file_name)}")
+            self.logger_service.info(f"tipo = {tipo} - {type(tipo)}")
+            self.logger_service.info(f"email = {email} - {type(email)}")
+            self.logger_service.info(f"s3_path = {s3_path} - {type(s3_path)}")
+            self.logger_service.info(f"client_id = {client_id} - {type(client_id)}")
+            self.logger_service.info(f"message_group = {message_group} - {type(message_group)}")
+            self.logger_service.info(f"user_id = {user_id} - {type(user_id)}")
+            self.logger_service.info(f"send_queue = {send_queue} - {type(send_queue)}")
+            self.logger_service.info(f"request_origin = {request_origin} - {type(request_origin)}")
+                
+            #worker-processor-worker_processor
+            container_name = 'worker-processor-worker_processor'
             if DEBUG:
-                worker_processor = WorkerProcessor()
-                
-                os.environ["TRANSACTION_ID"] = body['transaction_id']
-                os.environ["FILE_NAME"] = body['file_name']
-                os.environ["TIPO"] = str(body['tipo'])
-                os.environ["EMAIL"] = body['email']
-                os.environ["S3_PATH"] = body['s3_path']
-                os.environ["CLIENT_ID"] = str(body['client_id'])
-                os.environ["MESSAGE_GROUP"] = body['message_group']
-                os.environ["USER_ID"] = str(body['user_id'])
-                os.environ["SEND_QUEUE"] = str(body['send_queue'])
-                os.environ["REQUEST_ORIGIN"] = body['request_origin']
-                
-                sucesso, msg = worker_processor.iniciar_worker()
+                container_name = 'cbx-worker-processor-worker_processor'
+            self.logger_service.info(f"Container name: {container_name}")
+            
+            sucesso, msg = self.docker_service.start_worker_processor(container_name, transaction_id, file_name, tipo, \
+                email, s3_path, client_id, message_group, user_id, send_queue, request_origin) 
+            if sucesso:
+                self.logger_service.info(msg)
             else:
-                sucesso, msg = self.docker_service.start_worker_processor(body)
-                if sucesso:
-                    self.logger_service.info(msg)
-                else:
-                    self.logger_service.error(msg)
+                self.logger_service.error(msg)
             
             if sucesso:
-                #sucesso, msg = self.aws_service.delete_message(SQS_PROCESSAMENTO_RENOVABIO_DISPATCHER, message)
+                sucesso, msg = self.aws_service.delete_message(SQS_PROCESSAMENTO_RENOVABIO_DISPATCHER, message)
                 self.logger_service.info(msg)
                 self.logger_service.info(f"Finalizado mensagem: {message_id}")
             else:
                 self.logger_service.info(f"Mensagem não finalizada: {message_id}. Será processada novamente.")
             self.logger_service.info("------------------------------------------")
 
-    async def iniciar_worker(self):
+    async def iniciar_worker(self):        
         try:
-            self.logger_service.info("<<<--- INÍCIO DISPATCHER --->>>")
+            self.logger_service.info("<<<--- INÍCIO DISPATCHER --->>>")            
+            self.logger_service.info("ENVIRONMENT: " + ENVIRONMENT)
             while True:
                 self.consume_queue()
                 await asyncio.sleep(5)
