@@ -27,6 +27,7 @@ class WorkerDispatcher:
             transaction_id = body['transaction_id']
             file_name = body['file_name']
             tipo = str(body['tipo'])
+            email_request = body['email_request'] if 'email_request' in body else ''
             email = body['email']
             s3_path = body['s3_path']            
             client_id = str(body['client_id'])
@@ -35,16 +36,18 @@ class WorkerDispatcher:
             send_queue = body['send_queue']
             request_origin = body['request_origin']                       
                             
-            self.logger_service.info(f"transaction_id = {transaction_id} - {type(transaction_id)}")
-            self.logger_service.info(f"file_name = {file_name} - {type(file_name)}")
-            self.logger_service.info(f"tipo = {tipo} - {type(tipo)}")
-            self.logger_service.info(f"email = {email} - {type(email)}")
-            self.logger_service.info(f"s3_path = {s3_path} - {type(s3_path)}")
-            self.logger_service.info(f"client_id = {client_id} - {type(client_id)}")
-            self.logger_service.info(f"message_group = {message_group} - {type(message_group)}")
-            self.logger_service.info(f"user_id = {user_id} - {type(user_id)}")
-            self.logger_service.info(f"send_queue = {send_queue} - {type(send_queue)}")
-            self.logger_service.info(f"request_origin = {request_origin} - {type(request_origin)}")
+            self.logger_service.info(f"transaction_id: {transaction_id} - {type(transaction_id)}")
+            self.logger_service.info(f"file_name: {file_name} - {type(file_name)}")
+            self.logger_service.info(f"tipo: {tipo} - {type(tipo)}")
+            if email_request:
+                self.logger_service.info(f"email solicitacao ROBO: {email_request} - {type(email_request)}")
+            self.logger_service.info(f"email: {email} - {type(email)}")
+            self.logger_service.info(f"s3_path: {s3_path} - {type(s3_path)}")
+            self.logger_service.info(f"client_id: {client_id} - {type(client_id)}")
+            self.logger_service.info(f"message_group: {message_group} - {type(message_group)}")
+            self.logger_service.info(f"user_id: {user_id} - {type(user_id)}")
+            self.logger_service.info(f"send_queue: {send_queue} - {type(send_queue)}")
+            self.logger_service.info(f"request_origin: {request_origin} - {type(request_origin)}")
                 
             #worker-processor-worker_processor
             container_name = 'worker-processor-worker_processor'
@@ -53,7 +56,7 @@ class WorkerDispatcher:
             self.logger_service.info(f"Container name: {container_name}")
             
             sucesso, msg = self.docker_service.start_worker_processor(container_name, transaction_id, file_name, tipo, \
-                email, s3_path, client_id, message_group, user_id, send_queue, request_origin) 
+                email_request, email, s3_path, client_id, message_group, user_id, send_queue, request_origin) 
             if sucesso:
                 self.logger_service.info(msg)
             else:

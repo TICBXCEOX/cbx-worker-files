@@ -8,7 +8,7 @@ class DockerService:
         self.docker_client = docker.from_env()
         self.logger_service = LoggerService()
     
-    def start_worker_processor(self, container_name, transaction_id, file_name, tipo, email, 
+    def start_worker_processor(self, container_name, transaction_id, file_name, tipo, email_request, email, 
                                s3_path, client_id, message_group, user_id, send_queue, request_origin):
         try:            
             image=container_name
@@ -23,6 +23,7 @@ class DockerService:
             environment={
                 "ENVIRONMENT": ENVIRONMENT, # docker exec -it worker-processor printenv ENVIRONMENT
                 "S3_PATH": s3_path,
+                "EMAIL_REQUEST": email_request,
                 "EMAIL": email,
                 "TRANSACTION_ID": transaction_id,
                 "FILE_NAME": file_name,
@@ -31,7 +32,7 @@ class DockerService:
                 "MESSAGE_GROUP": message_group,
                 "USER_ID": user_id,
                 "REQUEST_ORIGIN": request_origin,
-                "SEND_QUEUE": send_queue                    
+                "SEND_QUEUE": send_queue
             }
                                                    
             container = self.docker_client.containers.run(
