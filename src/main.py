@@ -73,7 +73,7 @@ class WorkerDispatcher:
     async def iniciar_worker(self):        
         try:
             self.logger_service.info("<<<--- INÍCIO DISPATCHER --->>>")            
-            self.logger_service.info("ENVIRONMENT: " + ENVIRONMENT)
+            self.logger_service.info("ENVIRONMENT: " + ENV)
             while True:
                 self.consume_queue()
                 await asyncio.sleep(5)
