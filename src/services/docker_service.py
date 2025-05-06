@@ -1,6 +1,6 @@
 import docker
 
-from configs import ENVIRONMENT
+from configs import ENV
 from services.logger_service import LoggerService
 
 class DockerService:
@@ -21,7 +21,7 @@ class DockerService:
             mem_limit="1g"
             nano_cpus=500_000_000
             environment={
-                "ENVIRONMENT": ENVIRONMENT, # docker exec -it worker-processor printenv ENVIRONMENT
+                "ENVIRONMENT": ENV, # docker exec -it worker-processor printenv ENVIRONMENT
                 "S3_PATH": s3_path,
                 "EMAIL_REQUEST": email_request,
                 "EMAIL": email,

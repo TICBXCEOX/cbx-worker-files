@@ -1,12 +1,10 @@
 from dotenv import load_dotenv
+from version.env import ENV
+
 import os
 
-# Determine which environment we're in
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')  # default to 'development'
-#ENVIRONMENT = os.getenv('ENVIRONMENT', 'production')  # default to 'development'
-
 # Load the appropriate .env file
-if ENVIRONMENT == 'production':
+if ENV == 'production':
     env_path = os.path.join(os.path.dirname(__file__), '.env.prod')
     load_dotenv(env_path)
 else:
@@ -26,8 +24,6 @@ PG_PASSWORD=os.getenv('PG_PASSWORD')
 PG_DATABASE=os.getenv('PG_DATABASE')
 PG_HOST=os.getenv('PG_HOST')
 PG_PORT=os.getenv('PG_PORT')
-
-ENV=os.getenv('ENV')
 
 SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI')
 
