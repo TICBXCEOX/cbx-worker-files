@@ -2,8 +2,8 @@ from dotenv import load_dotenv
 import os
 
 # Determine which environment we're in
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')  # default to 'development'
-#ENVIRONMENT = os.getenv('ENVIRONMENT', 'production')  # default to 'development'
+#ENVIRONMENT = 'production'
+ENVIRONMENT = 'development'
 
 # Load the appropriate .env file
 if ENVIRONMENT == 'production':
@@ -14,7 +14,7 @@ else:
     load_dotenv(env_path)
 
 # Access the environment variables
-API_VERSION = '1.3.8'
+API_VERSION = '2.0.1'
 JWT_SECRET=os.getenv('JWT_SECRET')
 JWT_AUTH_HEADER_PREFIX=os.getenv('JWT_AUTH_HEADER_PREFIX')
 
