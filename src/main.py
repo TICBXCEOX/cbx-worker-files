@@ -36,7 +36,7 @@ class WorkerDispatcher:
             send_queue = body['send_queue']
             request_origin = body['request_origin']                       
                             
-            self.logger_service.info(f"transaction_id: {transaction_id} - {type(transaction_id)}")
+            self.logger_service.set_transaction_id(transaction_id)
             self.logger_service.info(f"file_name: {file_name} - {type(file_name)}")
             self.logger_service.info(f"tipo: {tipo} - {type(tipo)}")
             if email_request:
@@ -68,10 +68,10 @@ class WorkerDispatcher:
                 self.logger_service.info(f"Finalizado mensagem: {message_id}")
             else:
                 self.logger_service.info(f"Mensagem não finalizada: {message_id}. Será processada novamente.")
-            self.logger_service.info("------------------------------------------")
 
     async def iniciar_worker(self):        
         try:
+            self.logger_service.clear_transaction_id()
             self.logger_service.info("<<<--- INÍCIO DISPATCHER --->>>")            
             self.logger_service.info("ENVIRONMENT: " + ENV)
             while True:

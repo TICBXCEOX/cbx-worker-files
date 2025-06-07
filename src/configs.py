@@ -12,7 +12,7 @@ else:
     load_dotenv(env_path)
 
 # Access the environment variables
-API_VERSION = '1.3.8'
+API_VERSION = '2.0.1'
 JWT_SECRET=os.getenv('JWT_SECRET')
 JWT_AUTH_HEADER_PREFIX=os.getenv('JWT_AUTH_HEADER_PREFIX')
 

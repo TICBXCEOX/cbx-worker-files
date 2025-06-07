@@ -6,11 +6,13 @@ from services.logger_service import LoggerService
 class DockerService:
     def __init__(self):
         self.docker_client = docker.from_env()
-        self.logger_service = LoggerService()
+        self.logger_servicex = LoggerService()
     
     def start_worker_processor(self, container_name, transaction_id, file_name, tipo, email_request, email, 
                                s3_path, client_id, message_group, user_id, send_queue, request_origin):
-        try:            
+        try:
+            self.logger_servicex.set_transaction_id(transaction_id)
+            
             image=container_name
             detach=True
             remove=False
@@ -49,7 +51,7 @@ class DockerService:
                 environment=environment
             )
             
-            self.logger_service.info(f"Container {container.id[:12]} esta rodando.")
+            self.logger_servicex.info(f"Container {container.id[:12]} esta rodando.")
                         
             # espera terminar
             result = container.wait()  # bloqueia até o fim
@@ -61,10 +63,21 @@ class DockerService:
 
             # verifica se terminou com sucesso
             status_code = result.get("StatusCode", -1)
-            if status_code == 0:
-                return True, f"Processor finalizado com sucesso:\n\n{logs}\n"
+            success = (status_code == 0)
+
+            if DEBUG:
+                message = (
+                    f"Processor finalizado com sucesso:\n\n{logs}\n"
+                    if success else
+                    f"Erro no Processor (código {status_code}):\n\n{logs}\n"
+                )
             else:
-                return False, f"Erro no Processor (código {status_code}):\n\n{logs}\n"            
+                message = (
+                    "Processor finalizado com sucesso."
+                    if success else
+                    f"Erro no Processor (código {status_code})."
+                )
+            return success, message
         except Exception as ex:
             msg = f"Erro ao iniciar Processor: {ex}"
             return False, msg
