@@ -1,6 +1,6 @@
 import docker
 
-from configs import ENV
+from configs import DEBUG, ENV
 from services.logger_service import LoggerService
 
 class DockerService:

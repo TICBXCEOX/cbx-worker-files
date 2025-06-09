@@ -11,9 +11,9 @@ class WorkerDispatcher:
         self.docker_service = DockerService()
         self.logger_service = LoggerService()
 
-    def consume_queue(self):
+    def consume_queue(self):       
         # lê a fila de mensagens da entrega arquivo do zip pela API
-        sucesso, messages = self.aws_service.consume_message(SQS_PROCESSAMENTO_RENOVABIO_DISPATCHER)        
+        sucesso, messages = self.aws_service.consume_message(SQS_PROCESSAMENTO_RENOVABIO_DISPATCHER)                
         if not sucesso:
             self.logger_service.warn(messages)
             return
@@ -70,11 +70,11 @@ class WorkerDispatcher:
                 self.logger_service.info(f"Mensagem não finalizada: {message_id}. Será processada novamente.")
 
     async def iniciar_worker(self):        
-        try:
-            self.logger_service.clear_transaction_id()
+        try:            
             self.logger_service.info("<<<--- INÍCIO DISPATCHER --->>>")            
             self.logger_service.info("ENVIRONMENT: " + ENV)
             while True:
+                self.logger_service.clear_transaction_id()
                 self.consume_queue()
                 await asyncio.sleep(5)
         except Exception as ex:
